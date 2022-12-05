@@ -1,0 +1,114 @@
+// To get started, press Ctrl+Space to bring up the completion menu and view the available nodes.
+
+// You can also use the buttons in the sidebar to perform actions on nodes.
+// Actions currently available include:
+
+// * Enabling / disabling the node
+// * Adding the bus to a bus
+// * Removing the node
+// * Connecting ADC channels
+
+// For more help, browse the DeviceTree documentation at https://docs.zephyrproject.org/latest/guides/dts/index.html
+// You can also visit the nRF DeviceTree extension documentation at https://nrfconnect.github.io/vscode-nrf-connect/devicetree/nrfdevicetree.html
+
+/ {
+    ads1299ios {
+        compatible = "gpio-keys";
+        ads1299rst: ads1299_rst {
+			gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
+			label = "ADS1299 Reset Pin";
+		};
+
+        ads1299start: ads1299_start {
+			gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
+			label = "ADS1299 Start Pin";
+		};
+
+        ads1299pwdn: ads1299_pwdn {
+			gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
+			label = "ADS1299 Power-Down Pin";
+		};
+
+        // ads1299cs: ads1299_cs {
+		// 	gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
+		// 	label = "ADS1299 Chip-Select Pin";
+		// };
+
+        ads1299drdy: ads1299_drdy {
+			gpios = <&gpio0 6 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "ADS1299 Data-Ready Pin";
+		};
+    };
+};
+
+&pinctrl {
+	uart0_default: uart0_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 24)>,
+				<NRF_PSEL(UART_RTS, 0, 1)>;
+		};
+		group2 {
+			psels = <NRF_PSEL(UART_RX, 0, 25)>,
+				<NRF_PSEL(UART_CTS, 0, 7)>;
+			bias-pull-up;
+		};
+	};
+
+	uart0_sleep: uart0_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 24)>,
+			        <NRF_PSEL(UART_RX, 0, 25)>,
+				    <NRF_PSEL(UART_RTS, 0, 1)>,
+				    <NRF_PSEL(UART_CTS, 0, 7)>;
+			low-power-enable;
+		};
+	};
+	
+	/* Board Test */
+	spi1_default: spi1_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 14)>,
+				<NRF_PSEL(SPIM_MISO, 0, 15)>;
+		};
+	};
+
+	spi1_sleep: spi1_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 14)>,
+				<NRF_PSEL(SPIM_MISO, 0, 15)>;
+			low-power-enable;
+		};
+	};
+
+	/* Headband */
+	// spi1_default: spi1_default {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+	// 			<NRF_PSEL(SPIM_MOSI, 0, 15)>,
+	// 			<NRF_PSEL(SPIM_MISO, 0, 14)>;
+	// 	};
+	// };
+
+	// spi1_sleep: spi1_sleep {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+	// 			<NRF_PSEL(SPIM_MOSI, 0, 15)>,
+	// 			<NRF_PSEL(SPIM_MISO, 0, 14)>;
+	// 		low-power-enable;
+	// 	};
+	// };
+};
+
+
+ads1299spi: &spi1 {
+	compatible = "nordic,nrf-spi";
+	pinctrl-0 = <&spi1_default>;
+	pinctrl-1 = <&spi1_sleep>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
+	ads1299cs_0: ads1299cs_0@0 {
+		reg = < 0 >;
+	};
+};
