@@ -9,13 +9,14 @@
 #include <soc.h>
 #include <logging/log.h>
 
-#include "../../../src/main.h"
-
 // LOG_MODULE_REGISTER(ADS1299_Driver,LOG_LEVEL_DBG);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define ADS1299_GETDATA_ASYNC  1
+#define ADS1299_USING_BIAS_DRIVE_CIRCUIT 1
 
 /* */
 typedef struct {
@@ -29,8 +30,7 @@ typedef struct {
     void (*Delay_Ms)(uint16_t ms);
 } ADS1299_HwConfigType;
 
-#define ADS1299_GETDATA_ASYNC  1
-#define ADS1299_USING_BIAS_DRIVE_CIRCUIT 1
+typedef void (*ads1299_data_done_cb_t)(void);
 
 /* === Define HW Option for ADS1299 === */
 #define ADS1299_USING_HW_RESET
@@ -50,7 +50,9 @@ typedef struct {
     
 /* HW Specific Function */
 extern void ADS1299_Platform_Init(void);
-
+#if(ADS1299_GETDATA_ASYNC == 1)
+void ADS1299_Platform_DataDoneCB_Init(ads1299_data_done_cb_t cb);
+#endif
 extern ADS1299_HwConfigType ADS1299_Hw;
 
 #ifdef __cplusplus

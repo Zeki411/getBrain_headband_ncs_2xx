@@ -6,7 +6,6 @@
 
 #include <zephyr/zephyr.h>
 
-#include "main.h"
 #include "../components/ble_manager/BLEManager.h"
 #include "../components/drivers/ads1299/ads1299.h"
 
@@ -39,9 +38,18 @@ static struct bt_gbdcs_cb gbdcs_cb = {
     .cmd_cb = app_gbdcs_cmd_handle,
 };
 
+void app_ads1299_data_done(void)
+{
+    while (k_msgq_put(&gb_ads1299_msgq, &ADS1299_EEGRawDataBuffer[0][3], K_NO_WAIT) != 0) {
+        /* message queue is full: purge old data & try again */
+        k_msgq_purge(&gb_ads1299_msgq);
+    }
+}
+
 void main(void)
 {
 	ADS1299_Platform_Init();
+    ADS1299_Platform_DataDoneCB_Init(app_ads1299_data_done);
 	ADS1299_Init();
 
     BLEManager_Init();

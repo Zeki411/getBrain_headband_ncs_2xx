@@ -35,6 +35,7 @@ struct gpio_dt_spec ADS1299I_DRDY = GPIO_DT_SPEC_GET(DT_NODELABEL(ads1299drdy), 
 
 #if(ADS1299_GETDATA_ASYNC == 1)
 struct gpio_callback drdy_cb_data;
+ads1299_data_done_cb_t data_done_cb = NULL;
 #endif
 
 const struct device *spi_dev;
@@ -172,15 +173,25 @@ static void ADS1299_Platform_Delay(uint16_t ms)
 }
 
 #if(ADS1299_GETDATA_ASYNC == 1)
+void ADS1299_Platform_DataDoneCB_Init(ads1299_data_done_cb_t cb)
+{
+	data_done_cb = cb;
+}
+
 void ADS1299_Platform_DrdyCallback(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-	//Do something
 	ADS1299_GetSensorData(0);
 
-	while (k_msgq_put(&gb_ads1299_msgq, &ADS1299_EEGRawDataBuffer[0][3], K_NO_WAIT) != 0) {
-        /* message queue is full: purge old data & try again */
-        k_msgq_purge(&gb_ads1299_msgq);
-    }
+	// while (k_msgq_put(&gb_ads1299_msgq, &ADS1299_EEGRawDataBuffer[0][3], K_NO_WAIT) != 0) {
+    //     /* message queue is full: purge old data & try again */
+    //     k_msgq_purge(&gb_ads1299_msgq);
+    // }
+	if(data_done_cb)
+	{
+		data_done_cb();
+	}
+
+
 }
 #endif
 
