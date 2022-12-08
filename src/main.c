@@ -5,67 +5,30 @@
  */
 
 #include <zephyr/zephyr.h>
+#include <zephyr/logging/log.h>
+#include <app_event_manager.h>
 
+#include "config_event.h"
 #include "../components/ble_manager/BLEManager.h"
 #include "../components/drivers/ads1299/ads1299.h"
 
-#define STACKSIZE 1024
-#define THREAD0_PRIORITY 6
-#define MAX_QUEUE_LENGTH 50
-/* Init data queue */
-struct k_msgq gb_ads1299_msgq;
-K_MSGQ_DEFINE(gb_ads1299_msgq, (ADS1299_NUMBER_OF_CHANNEL * ADS1299_BYTEDATA_RESOLUTION), MAX_QUEUE_LENGTH, 4);
+#define MODULE main
 
-gbdcs_eeg_packet_t GBDC_EEG_Packet;
+LOG_MODULE_REGISTER(MODULE);
 
-static void app_gbdcs_cmd_handle(uint8_t cmd) 
-{
-    if(cmd == 0x01)
-    {
-        // Start gbdcs notify
-        ADS1299_CmdSTART();
-    }
-
-    if(cmd == 0x02)
-    {
-        // Stop gbdcs notify
-        ADS1299_CmdSTOP();
-        GBDC_EEG_Packet.frame.nb_sample = 0;
-    }
-}
-
-static struct bt_gbdcs_cb gbdcs_cb = {
-    .cmd_cb = app_gbdcs_cmd_handle,
-};
-
-void app_ads1299_data_done(void)
-{
-    while (k_msgq_put(&gb_ads1299_msgq, &ADS1299_EEGRawDataBuffer[0][3], K_NO_WAIT) != 0) {
-        /* message queue is full: purge old data & try again */
-        k_msgq_purge(&gb_ads1299_msgq);
-    }
-}
+#define INIT_VALUE 1
 
 void main(void)
 {
-	ADS1299_Platform_Init();
-    ADS1299_Platform_DataDoneCB_Init(app_ads1299_data_done);
-	ADS1299_Init();
-
+    ADS1299_Platform_Init();
     BLEManager_Init();
-    BLEManager_GBDCS_Init(&gbdcs_cb);
 
-    while (1)
-    {
-        if(gb_ads1299_msgq.used_msgs != 0){
-            k_msgq_get(&gb_ads1299_msgq, &GBDC_EEG_Packet.frame.eeg_data[0], K_FOREVER);
-            BLEManager_GBDCS_EEG_Notify((uint8_t *)&GBDC_EEG_Packet.buffer[0]);
-            GBDC_EEG_Packet.frame.nb_sample++;
-        }  
-    }
+	if (app_event_manager_init()) {
+		LOG_ERR("Application Event Manager not initialized");
+	} else {
+		struct config_event *event = new_config_event();
+
+		event->init_value1 = INIT_VALUE;
+		APP_EVENT_SUBMIT(event);
+	}
 }
-
-// K_THREAD_DEFINE(thread0_id, STACKSIZE, thread0, NULL, NULL, NULL,
-// 		THREAD0_PRIORITY, 0, 0);
-
-// SYS_INIT(ADS1299_Platform_Init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

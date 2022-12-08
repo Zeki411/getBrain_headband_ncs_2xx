@@ -30,7 +30,7 @@ typedef struct {
     void (*Delay_Ms)(uint16_t ms);
 } ADS1299_HwConfigType;
 
-typedef void (*ads1299_data_done_cb_t)(void);
+typedef void (*ads1299_data_done_cb_t)(uint8_t *data_buf, uint8_t size);
 
 /* === Define HW Option for ADS1299 === */
 #define ADS1299_USING_HW_RESET
@@ -49,7 +49,7 @@ typedef void (*ads1299_data_done_cb_t)(void);
 
     
 /* HW Specific Function */
-extern void ADS1299_Platform_Init(void);
+extern void ADS1299_Platform_Init();
 #if(ADS1299_GETDATA_ASYNC == 1)
 void ADS1299_Platform_DataDoneCB_Init(ads1299_data_done_cb_t cb);
 #endif

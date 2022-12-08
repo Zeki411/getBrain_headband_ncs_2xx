@@ -182,16 +182,10 @@ void ADS1299_Platform_DrdyCallback(const struct device *dev, struct gpio_callbac
 {
 	ADS1299_GetSensorData(0);
 
-	// while (k_msgq_put(&gb_ads1299_msgq, &ADS1299_EEGRawDataBuffer[0][3], K_NO_WAIT) != 0) {
-    //     /* message queue is full: purge old data & try again */
-    //     k_msgq_purge(&gb_ads1299_msgq);
-    // }
 	if(data_done_cb)
 	{
-		data_done_cb();
+		data_done_cb(&ADS1299_EEGRawDataBuffer[0][3], 24);
 	}
-
-
 }
 #endif
 

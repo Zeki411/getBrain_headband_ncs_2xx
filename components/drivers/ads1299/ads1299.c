@@ -3,7 +3,7 @@
 
 /* === Global Variable Definition === */
 ADS1299_GlobalConfigType ADS1299_GlbCfg;
-uint8_t ADS1299_EEGRawDataBuffer[ADS1299_NUMBER_OF_USED_BOARD][3 + ADS1299_NUMBER_OF_CHANNEL * ADS1299_BYTEDATA_RESOLUTION];
+volatile uint8_t ADS1299_EEGRawDataBuffer[ADS1299_NUMBER_OF_USED_BOARD][3 + ADS1299_NUMBER_OF_CHANNEL * ADS1299_BYTEDATA_RESOLUTION];
 
 /* === Static Variable Definition === */
 static ADS1299_GlobalConfigType *ADS1299_pGlbCfg = NULL;
