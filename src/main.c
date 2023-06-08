@@ -32,3 +32,26 @@ void main(void)
 		APP_EVENT_SUBMIT(event);
 	}
 }
+
+// uint8_t test_arr[24] = {0};
+
+// void main(void)
+// {
+//     ADS1299_Platform_Init();
+// 	ADS1299_Init();
+// 	ADS1299_CmdSTART();
+
+// 	while(1)
+// 	{
+// 		__NOP();
+// 		// for(uint8_t idx = 0; idx < 24; idx++)
+// 		// {
+// 		// 	test_arr[idx]++;
+// 		// }
+
+// 		// if(test_arr[0] == 255)
+// 		// {
+// 		// 	__NOP();
+// 		// }
+// 	}
+// }

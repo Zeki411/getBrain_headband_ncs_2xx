@@ -47,8 +47,8 @@ struct spi_cs_control spim_cs = {
 };
 
 static const struct spi_config spi_cfg = {
-	.operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB |
-				 SPI_MODE_CPOL,
+	.operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB | SPI_MODE_CPHA,
+				//  SPI_MODE_CPOL,
 	.frequency = 4000000,
 	.slave = 0,
 	.cs = &spim_cs,

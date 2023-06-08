@@ -82,7 +82,7 @@
 		};
 	};
 
-	/* Headband */
+	// /* Headband v1*/
 	// spi1_default: spi1_default {
 	// 	group1 {
 	// 		psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
@@ -96,6 +96,24 @@
 	// 		psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
 	// 			<NRF_PSEL(SPIM_MOSI, 0, 15)>,
 	// 			<NRF_PSEL(SPIM_MISO, 0, 14)>;
+	// 		low-power-enable;
+	// 	};
+	// };
+
+	/* Headband v2*/
+	// spi1_default: spi1_default {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+	// 			<NRF_PSEL(SPIM_MOSI, 0, 14)>,
+	// 			<NRF_PSEL(SPIM_MISO, 0, 15)>;
+	// 	};
+	// };
+
+	// spi1_sleep: spi1_sleep {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+	// 			<NRF_PSEL(SPIM_MOSI, 0, 14)>,
+	// 			<NRF_PSEL(SPIM_MISO, 0, 15)>;
 	// 		low-power-enable;
 	// 	};
 	// };
